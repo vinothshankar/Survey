@@ -1,0 +1,81 @@
+﻿@model List<Questions>
+@{
+    int count = 1, countR = 0;
+}
+<div class="container">
+
+    <div class="Survey">
+
+        <h4 style="margin-top: 4%;"> <span class="label label-info">Questions :</span> </h4>
+
+        @if (Model != null && Model.Any())
+        {
+
+            foreach (var question in Model)
+            {
+                <div class="BlockQ" style="border: 1px solid #bdbdbd; width: 75%; border-radius: 4px; margin-top: 40px; background-color: #f0ffff; padding: 8px;">
+
+                    <div class="Question" style="padding: 2%;">
+                        <span class="label label-warning"> @string.Format("{0}{1}.", "Q", count)</span>
+                        <span id="@string.Format("{0}{1}", "ID_Q", count)" style="display:none;">@question.QuestionId</span>
+                        <p style="display: inline; padding: 2%;" id="@string.Format("{0}{1}", "Q", count)">@question.Title (@question.SubTitle)</p>
+                    </div>
+
+                    <div class="Choices" style="margin-left: 8%;">
+
+                        @foreach (var choice in question.options)
+                        {
+                            <label class="radio-inline">
+                                <input type="radio" name="@string.Format("{0}{1}", "inlineRadioOptions",count)" id="@string.Format("{0}{1}", "inlineRadio", countR)" value="@choice.OptionId" style="margin-left: -16px;"> @choice.Text
+                            </label><br />
+                            countR++;
+                        }
+
+                    </div>
+                </div>
+                count++;
+            }
+            <span id="countQuections" style="display:none;">@count</span>
+            <button type="button" id="SubmitSurvey" class="btn btn-light" style="margin-top: 10px;"><span class="glyphicon glyphicon-ok"></span>   Submit Survey </button>
+            <a href="/Survey/Index" class="btn btn-default">Back</a>
+
+        }
+
+    </div>
+</div>
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+
+        $('#SubmitSurvey').on('click', function () {
+
+            //count Questions
+            var sel = $('#countQuections').text();
+            var resultSurvey = [], countQuestion = parseInt(sel), question = {}, j = 1;
+
+            for (var i = 1; i < countQuestion; i++) {
+                resultSurvey.push({
+                    QuestionID: $('#ID_Q' + i).text(),
+                    OptionId: $('input[name=inlineRadioOptions' + i + ']:checked').val()
+                });
+            }
+
+            $.ajax({
+                url: 'SaveResult',
+                type: 'POST',
+                data: JSON.stringify(resultSurvey),
+                success: function (response) {
+                    alert("Survey Completed Successfully");
+                    window.location.href = "/Survey/Index";
+                },
+                error: function (response) {
+
+                }
+            });
+
+        });
+    });
+
+</script>

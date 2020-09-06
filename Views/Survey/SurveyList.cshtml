@@ -1,0 +1,19 @@
+﻿@model List<Surveys>
+
+@{
+    ViewBag.Title = "SelectSurvey";
+}
+
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">Compass Survey</div>
+        <div class="panel-body">
+            @foreach (var survey in Model)
+            {
+                <a href="/Survey/FetchAllQuestionsBySurveyId?surveyId=@(survey.SurveyId)" class="btn btn-light">@survey.Name</a>
+                <br />
+                <br />
+            }
+        </div>
+    </div>
+</div>
